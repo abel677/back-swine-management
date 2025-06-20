@@ -1,0 +1,8 @@
+docker-compose up -d
+docker ps
+docker stop ID
+docker rm ID
+
+docker exec -it ID  mysql -u root -p
+GRANT ALL PRIVILEGES ON *.* TO 'abel'@'%' WITH GRANT OPTION;
+FLUSH PRIVILEGES;
