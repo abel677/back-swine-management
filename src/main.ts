@@ -19,13 +19,11 @@ import { SendDailyNotificationsUseCase } from './context/notifications/applicati
     app.listen(envConfig.PORT, '0.0.0.0', () => {
       console.log(`🚀 API corriendo en puerto: ${envConfig.PORT}`);
 
-      // ⏰ Ejecuta el cron job cada
       cron.schedule('0 8 * * *', async () => {
-        //console.log('⏰ Ejecutando envío automático de notificaciones...');
         const sendNotifications = container.resolve(
           SendDailyNotificationsUseCase,
         );
-        //await sendNotifications.execute();
+        await sendNotifications.execute();
       });
     });
   } catch (err) {
