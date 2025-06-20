@@ -27,10 +27,7 @@ app.set('trust proxy', true);
 // Seguridad primero
 app.use(
   cors({
-    origin: [
-      'http://localhost:8100',
-      'https://back-swine-management-production.up.railway.app/',
-    ],
+    origin: ['http://localhost:8100', 'http://192.168.10.100:8100'],
     credentials: true,
   }),
 );
