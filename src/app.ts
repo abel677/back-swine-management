@@ -27,7 +27,7 @@ app.set('trust proxy', true);
 // Seguridad primero
 app.use(
   cors({
-    origin: ['http://localhost:8100', 'http://192.168.10.100:8100'],
+    origin: '*',
     credentials: true,
   }),
 );
