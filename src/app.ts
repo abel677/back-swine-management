@@ -22,7 +22,7 @@ import deviceRoutes from './context/device/presentation/routes';
 import notificationRoutes from './context/notifications/presentation/routes';
 
 const app = express();
-app.set('trust proxy', true);
+app.set('trust proxy', envConfig.NODE_ENV === 'production' ? true : false);
 
 // Seguridad primero
 app.use(

@@ -29,5 +29,5 @@ export enum PigReproductiveStage {
   Gestation = "Gestación",
   Lactation = "Lactancia",
   Weaning = "Destete",
-  Rest = "Descanso",
+  Rest = "Reposo",
 }

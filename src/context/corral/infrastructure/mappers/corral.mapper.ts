@@ -12,7 +12,9 @@ export class CorralMapper {
       id: corral.id,
       farm: FarmMapper.toHttpResponse(corral.farm),
       name: corral.name,
-      pigs: corral.pigs,
+      pigs: corral.pigs.map((pig) => ({
+        id: pig.id,
+      })),
     };
   }
 

@@ -12,14 +12,15 @@ export class PrismaNotificationRepository implements NotificationRepository {
   ) {}
 
   async delete(params: { userId: string; earTag: string }): Promise<void> {
-    await this.prisma.notification.deleteMany({
+    const result = await this.prisma.notification.deleteMany({
       where: {
         userId: params.userId,
         metadata: {
-          string_contains: `"earTag":"${params.earTag}"`,
+          contains: `"earTag":"${params.earTag}"`,
         },
       },
     });
+    console.log(result.count);
   }
 
   async findAllSent(userId: string): Promise<Notification[]> {

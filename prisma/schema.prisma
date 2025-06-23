@@ -233,8 +233,8 @@ model Notification {
   read      Boolean   @default(false)
   createdAt DateTime
   sentAt    DateTime?
-  eventType String // ejemplo: "Tareas", "Recordatorios", etc.
-  metadata  Json? // datos extra que quieras guardar para la notificación
+  eventType String
+  metadata String? @db.LongText
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
