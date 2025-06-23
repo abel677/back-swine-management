@@ -20,7 +20,6 @@ export class PrismaNotificationRepository implements NotificationRepository {
         },
       },
     });
-    console.log(result.count);
   }
 
   async findAllSent(userId: string): Promise<Notification[]> {
