@@ -45,6 +45,20 @@ model FarmAssignment {
   farm      Farm     @relation(fields: [farmId], references: [id], onDelete: Cascade)
 }
 
+model Setting {
+  id                       String  @id @default(uuid())
+  farmId                   String
+  matingHeatDurationDays   Int // Duración en días del estado de celo
+  inseminationDurationDays Int // Duración en días del estado de inseminación
+  gestationDurationDays    Int // Duración en días del estado de gestación
+  lactationDurationDays    Int // Duración en días del estado de lactancia
+  weaningDurationDays      Int // Duración en días del estado de destete
+  restingDurationDays      Int // Duración en días del estado de descanso
+  initialPigletPrice       Decimal @db.Decimal(10, 3)
+  minimumBreedingAgeInDays Int
+  farm                     Farm    @relation(fields: [farmId], references: [id], onDelete: Cascade)
+}
+
 model Farm {
   id                String              @id @default(uuid())
   name              String
@@ -234,7 +248,7 @@ model Notification {
   createdAt DateTime
   sentAt    DateTime?
   eventType String
-  metadata String? @db.LongText
+  metadata  String?   @db.LongText
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
@@ -242,23 +256,9 @@ model Notification {
 model Device {
   id        String   @id @default(uuid())
   userId    String
-  token     String   @unique
-  platform  String // ios, android, web, etc.
+  token     String
+  platform  String
   createdAt DateTime
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
-
-model Setting {
-  id                       String  @id @default(uuid())
-  farmId                   String
-  matingHeatDurationDays   Int // Duración en días del estado de celo
-  inseminationDurationDays Int // Duración en días del estado de inseminación
-  gestationDurationDays    Int // Duración en días del estado de gestación
-  lactationDurationDays    Int // Duración en días del estado de lactancia
-  weaningDurationDays      Int // Duración en días del estado de destete
-  restingDurationDays      Int // Duración en días del estado de descanso
-  initialPigletPrice       Decimal @db.Decimal(10, 3)
-  minimumBreedingAgeInDays Int
-  farm                     Farm    @relation(fields: [farmId], references: [id], onDelete: Cascade)
 }
