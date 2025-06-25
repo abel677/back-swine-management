@@ -28,7 +28,7 @@ import { SendDailyNotificationsUseCase } from './context/notifications/applicati
       });
 
       // A las 13:15
-      cron.schedule('56 14 * * *', async () => {
+      cron.schedule('00 13 * * *', async () => {
         const sendNotifications = container.resolve(
           SendDailyNotificationsUseCase,
         );
