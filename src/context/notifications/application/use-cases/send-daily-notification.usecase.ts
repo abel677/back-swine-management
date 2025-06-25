@@ -24,6 +24,8 @@ export class SendDailyNotificationsUseCase {
       false,
     );
 
+    console.log(notifications);
+
     for (const notification of notifications) {
       const devices = await this.deviceRepository.getAll(notification.userId);
       const tokens = devices.map((d) => d.token).filter(Boolean);

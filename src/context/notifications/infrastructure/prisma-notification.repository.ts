@@ -44,12 +44,14 @@ export class PrismaNotificationRepository implements NotificationRepository {
     startDate.setHours(0, 0, 0, 0);
 
     const endDate = new Date(startDate);
-    endDate.setDate(endDate.getDate() + 3);
+    endDate.setDate(endDate.getDate() + 1);
+    endDate.setHours(23, 59, 59, 999); 
 
     const dateRange = {
       start: startDate,
       end: endDate,
     };
+
 
     const notifications = await this.prisma.notification.findMany({
       where: {
