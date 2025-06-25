@@ -255,7 +255,7 @@ model Notification {
 
 model Device {
   id        String   @id @default(uuid())
-  userId    String
+  userId    String   @unique
   token     String
   platform  String
   createdAt DateTime
