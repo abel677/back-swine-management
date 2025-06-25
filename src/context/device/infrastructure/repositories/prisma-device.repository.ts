@@ -12,7 +12,7 @@ export class PrismaDeviceRepository implements DeviceRepository {
     const data = DeviceMapper.toPersistence(device);
 
     const newDevice = await this.prisma.device.upsert({
-      where: { userId: data.userId },
+      where: { token: data.token },
       update: {
         userId: data.userId,
         platform: data.platform,
@@ -31,7 +31,7 @@ export class PrismaDeviceRepository implements DeviceRepository {
   }
 
   async findByToken(token: string): Promise<Device | null> {
-    const device = await this.prisma.device.findFirst({
+    const device = await this.prisma.device.findUnique({
       where: {
         token: token,
       },

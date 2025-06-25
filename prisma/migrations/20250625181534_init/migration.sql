@@ -37,6 +37,22 @@ CREATE TABLE `FarmAssignment` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
+CREATE TABLE `Setting` (
+    `id` VARCHAR(191) NOT NULL,
+    `farmId` VARCHAR(191) NOT NULL,
+    `matingHeatDurationDays` INTEGER NOT NULL,
+    `inseminationDurationDays` INTEGER NOT NULL,
+    `gestationDurationDays` INTEGER NOT NULL,
+    `lactationDurationDays` INTEGER NOT NULL,
+    `weaningDurationDays` INTEGER NOT NULL,
+    `restingDurationDays` INTEGER NOT NULL,
+    `initialPigletPrice` DECIMAL(10, 3) NOT NULL,
+    `minimumBreedingAgeInDays` INTEGER NOT NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
 CREATE TABLE `Farm` (
     `id` VARCHAR(191) NOT NULL,
     `name` VARCHAR(191) NOT NULL,
@@ -208,7 +224,7 @@ CREATE TABLE `Notification` (
     `createdAt` DATETIME(3) NOT NULL,
     `sentAt` DATETIME(3) NULL,
     `eventType` VARCHAR(191) NOT NULL,
-    `metadata` JSON NULL,
+    `metadata` LONGTEXT NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -222,22 +238,6 @@ CREATE TABLE `Device` (
     `createdAt` DATETIME(3) NOT NULL,
 
     UNIQUE INDEX `Device_token_key`(`token`),
-    PRIMARY KEY (`id`)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
--- CreateTable
-CREATE TABLE `Setting` (
-    `id` VARCHAR(191) NOT NULL,
-    `farmId` VARCHAR(191) NOT NULL,
-    `matingHeatDurationDays` INTEGER NOT NULL,
-    `inseminationDurationDays` INTEGER NOT NULL,
-    `gestationDurationDays` INTEGER NOT NULL,
-    `lactationDurationDays` INTEGER NOT NULL,
-    `weaningDurationDays` INTEGER NOT NULL,
-    `restingDurationDays` INTEGER NOT NULL,
-    `initialPigletPrice` DECIMAL(10, 3) NOT NULL,
-    `minimumBreedingAgeInDays` INTEGER NOT NULL,
-
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -258,6 +258,9 @@ ALTER TABLE `FarmAssignment` ADD CONSTRAINT `FarmAssignment_userId_fkey` FOREIGN
 
 -- AddForeignKey
 ALTER TABLE `FarmAssignment` ADD CONSTRAINT `FarmAssignment_farmId_fkey` FOREIGN KEY (`farmId`) REFERENCES `Farm`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `Setting` ADD CONSTRAINT `Setting_farmId_fkey` FOREIGN KEY (`farmId`) REFERENCES `Farm`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `Farm` ADD CONSTRAINT `Farm_ownerId_fkey` FOREIGN KEY (`ownerId`) REFERENCES `User`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
@@ -330,9 +333,6 @@ ALTER TABLE `Notification` ADD CONSTRAINT `Notification_userId_fkey` FOREIGN KEY
 
 -- AddForeignKey
 ALTER TABLE `Device` ADD CONSTRAINT `Device_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE `Setting` ADD CONSTRAINT `Setting_farmId_fkey` FOREIGN KEY (`farmId`) REFERENCES `Farm`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `_RoleToUser` ADD CONSTRAINT `_RoleToUser_A_fkey` FOREIGN KEY (`A`) REFERENCES `Role`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
