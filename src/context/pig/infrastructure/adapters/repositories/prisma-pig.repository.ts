@@ -80,6 +80,7 @@ export class PrismaPigRepository implements PigRepository {
     });
     return pigs.map((pig) => PigMapper.toDomain(pig));
   }
+
   async save(pig: Pig): Promise<void> {
     await this.prisma.pig.upsert({
       where: { id: pig.id },

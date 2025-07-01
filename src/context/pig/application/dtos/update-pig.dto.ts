@@ -21,7 +21,16 @@ export class UpdatePigDto {
     }[],
     public readonly pigProduct?: {
       id?: string;
-      productId?: string;
+      product?: {
+        id?: string;
+        name: string;
+        category: {
+          id?: string;
+          name: string;
+        };
+        price: number;
+        description?: string;
+      };
       quantity?: number;
       price?: number;
       date?: string;
@@ -128,34 +137,80 @@ export class UpdatePigDto {
         }
       }
     }
-
-    if (body.pigProduct) {
-      if (!Array.isArray(body.pigProduct)) {
-        return [
-          'pigProduct: Debe ser un array de objetos {id?, productId, quantity, price, date, observation?}',
-        ];
+    if (pigProduct) {
+      if (!Array.isArray(pigProduct)) {
+        return ['pigProduct: Debe ser un array de productos.'];
       }
 
-      for (const product of body.pigProduct) {
-        if (!product.productId || !Regex.isValidUUID(product.productId)) {
-          return ['productId: ID inválido o faltante.'];
+      for (let i = 0; i < pigProduct.length; i++) {
+        const entry = pigProduct[i];
+        const prefix = `pigProduct[${i}]`;
+
+        if (entry.id && !Regex.isValidUUID(entry.id)) {
+          return [`${prefix}.id: ID inválido.`];
         }
+
+        if (!entry.product || typeof entry.product !== 'object') {
+          return [`${prefix}.product: Objeto producto requerido.`];
+        } else {
+          const { id, name, category, price } = entry.product;
+
+          if (id) {
+            if (!Regex.isValidUUID(id)) {
+              return [`${prefix}.product.id: ID de producto inválido.`];
+            }
+          } else {
+            if (!name || typeof name !== 'string') {
+              return [`${prefix}.product.name: Nombre del producto requerido.`];
+            }
+
+            if (typeof price !== 'number' || price < 0) {
+              return [`${prefix}.product.price: Precio inválido.`];
+            }
+
+            if (!category || typeof category !== 'object') {
+              return [`${prefix}.product.category: Categoría requerida.`];
+            }
+
+            if (category.id) {
+              if (!Regex.isValidUUID(category.id)) {
+                return [
+                  `${prefix}.product.category.id: ID de categoría inválido.`,
+                ];
+              }
+            } else {
+              if (!category.name || typeof category.name !== 'string') {
+                return [
+                  `${prefix}.product.category.name: Nombre de categoría requerido.`,
+                ];
+              }
+            }
+          }
+        }
+
         if (
-          product.quantity === undefined ||
-          typeof product.quantity !== 'number' ||
-          product.quantity <= 0
+          entry.quantity !== undefined &&
+          (typeof entry.quantity !== 'number' || entry.quantity <= 0)
         ) {
-          return ['quantity: Cantidad inválida o faltante.'];
+          return [`${prefix}.quantity: Cantidad inválida.`];
         }
+
         if (
-          product.price === undefined ||
-          typeof product.price !== 'number' ||
-          product.price <= 0
+          entry.price !== undefined &&
+          (typeof entry.price !== 'number' || entry.price < 0)
         ) {
-          return ['price: Precio inválido o faltante.'];
+          return [`${prefix}.price: Precio inválido.`];
         }
-        if (!product.date || !Regex.isoDate.test(product.date)) {
-          return ['date: Fecha inválida o faltante.'];
+
+        if (entry.date && !Regex.isoDate.test(entry.date)) {
+          return [`${prefix}.date: Fecha inválida.`];
+        }
+
+        if (
+          entry.observation !== undefined &&
+          typeof entry.observation !== 'string'
+        ) {
+          return [`${prefix}.observation: Observación inválida.`];
         }
       }
     }

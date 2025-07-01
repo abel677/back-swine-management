@@ -85,6 +85,8 @@ import { NotificationSender } from '../context/notifications/domain/ports/notifi
 import { FirebaseNotificationAdapter } from '../context/notifications/infrastructure/firebase-notification.adapter';
 import { AllNotificationUseCase } from '../context/notifications/application/use-cases/all-notification.usecase';
 import { AllPigByIdsUseCase } from '../context/pig/application/use-cases/all-pig-by-ids.usecase';
+import { GetProductByNameUseCase } from '../context/product/application/use-cases/get-product-by-name.usecase';
+import { GetCategoryByNameUseCase } from '../context/category/application/use-cases/get-category-by-name.usecase';
 
 export function configureContainer(prismaClient: PrismaClient) {
   container.registerInstance('PrismaClient', prismaClient);
@@ -304,6 +306,10 @@ export function configureContainer(prismaClient: PrismaClient) {
     'GetCategoryByIdUseCase',
     GetCategoryByIdUseCase,
   );
+  container.registerSingleton<GetCategoryByNameUseCase>(
+    'GetCategoryByNameUseCase',
+    GetCategoryByNameUseCase,
+  );
   container.registerSingleton<CreateCategoryUseCase>(
     'CreateCategoryUseCase',
     CreateCategoryUseCase,
@@ -329,6 +335,10 @@ export function configureContainer(prismaClient: PrismaClient) {
   container.registerSingleton<GetProductByIdUseCase>(
     'GetProductByIdUseCase',
     GetProductByIdUseCase,
+  );
+  container.registerSingleton<GetProductByNameUseCase>(
+    'GetProductByNameUseCase',
+    GetProductByNameUseCase,
   );
 
   // corrals

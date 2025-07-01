@@ -26,10 +26,15 @@ interface PigProps {
   birthId?: string;
   motherId?: string;
   fatherId?: string;
+
+  corralId?: string;
   sowReproductiveCycle: ReproductiveCycle[];
   sowCurrentReproductiveCycle: ReproductiveCycle | null;
   weights: PigWeight[];
   pigProduct: PigProduct[];
+
+  childrenFromMother: Pig[];
+
   createdAt: Date;
   updatedAt: Date;
 }
@@ -65,6 +70,7 @@ export class Pig {
       weights: [],
       pigProduct: [],
       sowCurrentReproductiveCycle: null,
+      childrenFromMother: [],
       createdAt: currentDate,
       updatedAt: currentDate,
     });
@@ -223,6 +229,10 @@ export class Pig {
     return this.props.fatherId;
   }
 
+  get corralId() {
+    return this.props.corralId;
+  }
+
   get pigProduct() {
     return this.props.pigProduct;
   }
@@ -234,6 +244,9 @@ export class Pig {
     return this.props.sowCurrentReproductiveCycle;
   }
 
+  get childrenFromMother() {
+    return this.props.childrenFromMother;
+  }
   get weights() {
     return this.props.weights;
   }

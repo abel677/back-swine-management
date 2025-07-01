@@ -56,24 +56,29 @@ export class CreateFarmUseCase {
         order: 1,
       }),
       ReproductiveStage.create({
-        name: 'Gestación',
+        name: 'Inseminación',
         farmId: farm.id,
         order: 2,
       }),
       ReproductiveStage.create({
-        name: 'Lactancia',
+        name: 'Gestación',
         farmId: farm.id,
         order: 3,
       }),
       ReproductiveStage.create({
-        name: 'Destete',
+        name: 'Lactancia',
         farmId: farm.id,
         order: 4,
       }),
       ReproductiveStage.create({
-        name: 'Reposo',
+        name: 'Destete',
         farmId: farm.id,
         order: 5,
+      }),
+      ReproductiveStage.create({
+        name: 'Reposo',
+        farmId: farm.id,
+        order: 6,
       }),
     ];
     const breeds = [

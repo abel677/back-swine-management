@@ -1,3 +1,4 @@
+import { Pig as PigPrisma } from './../../domain/entities/pig.entity';
 import { Prisma } from '@prisma/client';
 import { Pig } from '../../domain/entities/pig.entity';
 import { FarmMapper } from '../../../farm/infrastructure/mappers/farm.mapper';
@@ -25,6 +26,7 @@ export class PigMapper {
       birthId: pig.birthId,
       motherId: pig.motherId,
       fatherId: pig.fatherId,
+      corralId: pig.corralId || null,
       pigProduct: pig.pigProduct?.map((p) =>
         PigProductMapper.fromDomainToHttpResponse(p),
       ),
@@ -38,6 +40,7 @@ export class PigMapper {
         pig.sowReproductiveCycle?.length > 0
           ? ReproductiveCycleMapper.toHttpResponse(pig.sowReproductiveCycle[0])
           : null,
+      childrenFromMother: pig.childrenFromMother,
     };
   }
 
@@ -51,13 +54,14 @@ export class PigMapper {
       farm: FarmMapper.toDomain(data.farm),
       breed: BreedMapper.toDomain(data.breed),
       phase: PhaseMapper.toDomain(data.phase),
-      initialPrice: data.initialPrice.toNumber(),
-      investedPrice: data.investedPrice.toNumber(),
+      initialPrice: data.initialPrice,
+      investedPrice: data.investedPrice,
       state: data.state,
-      weaned: data.weaned || null,
+      weaned: data.weaned,
       birthId: data.birthId,
       motherId: data.motherId,
       fatherId: data.fatherId,
+      corralId: data.corralId,
       weights: data.weights?.map((w: any) =>
         PigWeightMapper.fromPersistenceToDomain(w),
       ),
@@ -71,6 +75,7 @@ export class PigMapper {
         data.sowReproductiveCycle && data.sowReproductiveCycle.length > 0
           ? ReproductiveCycleMapper.toDomain(data.sowReproductiveCycle[0])
           : null,
+      childrenFromMother: data.childrenFromMother,
       createdAt: data.createdAt,
       updatedAt: data.updatedAt,
     });
@@ -127,7 +132,7 @@ export class PigMapper {
                       state: piglet.state,
                       farm: { connect: { id: piglet.farm.id } },
                       breed: { connect: { id: piglet.breed.id } },
-                      phase: { connect: { id: pig.phase.id } },
+                      phase: { connect: { id: piglet.phase.id } },
                       mother: { connect: { id: piglet.motherId } },
                       father: piglet.fatherId
                         ? { connect: { id: piglet.fatherId } }
@@ -244,7 +249,7 @@ export class PigMapper {
                             initialPrice: piglet.initialPrice,
                             investedPrice: piglet.investedPrice,
                             state: piglet.state,
-                            phase: { connect: { id: pig.phase.id } },
+                            phase: { connect: { id: piglet.phase.id } },
                             mother: { connect: { id: piglet.motherId } },
                             father: piglet.fatherId
                               ? { connect: { id: piglet.fatherId } }

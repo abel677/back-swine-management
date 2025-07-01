@@ -1,3 +1,4 @@
+import { GetCategoryByNameUseCase } from './../../../category/application/use-cases/get-category-by-name.usecase';
 import { inject, injectable } from 'tsyringe';
 import { PigRepository } from '../../domain/ports/pig.repository';
 import { UpdatePigDto } from '../dtos/update-pig.dto';
@@ -28,6 +29,12 @@ import { PigMapper } from '../../infrastructure/mappers/pig.mapper';
 import { PigWeight } from '../../domain/entities/pig-weight';
 import { GetProductByIdUseCase } from '../../../product/application/use-cases/get-product-by-id.usecase';
 import { PigProduct } from '../../domain/entities/pig-product.entity';
+import { Product } from '../../../product/domain/entities/product.entity';
+import { GetCategoryByIdUseCase } from '../../../category/application/use-cases/get-category-by-id.usecase';
+import { CreateProductUseCase } from '../../../product/application/use-cases/create-product.usecase';
+import { CreateCategoryUseCase } from '../../../category/application/use-cases/create-category.usecase';
+import { Category } from '../../../category/domain/entities/category.entity';
+import { GetProductByNameUseCase } from '../../../product/application/use-cases/get-product-by-name.usecase';
 
 @injectable()
 export class UpdatePigUseCase {
@@ -50,14 +57,28 @@ export class UpdatePigUseCase {
     private readonly getBreedByNameUseCase: GetBreedByNameUseCase,
     @inject('CreateBreedUseCase')
     private readonly createBreedUseCase: CreateBreedUseCase,
+
     @inject('GetPhaseByNameUseCase')
     private readonly getPhaseByNameUseCase: GetPhaseByNameUseCase,
     @inject('CreateSowNotificationsUseCase')
     private readonly createSowNotificationUseCase: CreateSowNotificationsUseCase,
     @inject('DeleteSowNotificationUseCase')
     private readonly deleteSowNotificationUseCase: DeleteSowNotificationUseCase,
+    // producto
     @inject('GetProductByIdUseCase')
     private readonly getProductByIdUseCase: GetProductByIdUseCase,
+    @inject('GetProductByIdUseCase')
+    private readonly getProductByName: GetProductByNameUseCase,
+    @inject('CreateProductUseCase')
+    private readonly createProductUseCase: CreateProductUseCase,
+
+    // categoria
+    @inject('GetCategoryByIdUseCase')
+    private readonly getCategoryByIdUseCase: GetCategoryByIdUseCase,
+    @inject('GetCategoryByNameUseCase')
+    private readonly getCategoryByNameUseCase: GetCategoryByNameUseCase,
+    @inject('CreateCategoryUseCase')
+    private readonly createCategoryUseCase: CreateCategoryUseCase,
   ) {}
 
   async execute(userId: string, id: string, dto: UpdatePigDto) {
@@ -144,18 +165,70 @@ export class UpdatePigUseCase {
     // actualizar productos
     if (dto.pigProduct) {
       for (const pigProd of dto.pigProduct) {
-        if (!pigProd.id && !pigProd.productId)
-          throw Application.badRequest(
-            'productId: ID producto inválido o faltante.',
-          );
-
         let product = undefined;
-        if (pigProd.productId) {
-          product = await this.getProductByIdUseCase.execute(
-            pigProd.productId,
-            pig.farm.id,
-          );
 
+        // verificar si vienen un producto
+        if (pigProd.product) {
+          // verificar si ya existe mediante el id
+          if (pigProd.product.id) {
+            // obtener el producto por el lid
+            product = await this.getProductByIdUseCase.execute(
+              pigProd.product.id,
+              pig.farm.id,
+            );
+          } else {
+            // obtener mediante el nombre, en por si ya se ha sincronizado
+            product = await this.getProductByName.execute(
+              pigProd.product.name,
+              pig.farm.id,
+            );
+
+            // obtener la categoría
+            let category: Category | null = null;
+
+            // verificar si viene una categoría
+            if (pigProd.product.category) {
+              // verificar si ya existe por el id
+              if (pigProd.product.category.id) {
+                // obtener la categoría por el id
+                category = await this.getCategoryByIdUseCase.execute(
+                  pigProd.product.category.id,
+                  pig.farm.id,
+                );
+              } else {
+                // obtener por el nombre por si ya se ha sincronizado
+                category = await this.getCategoryByNameUseCase.execute(
+                  pigProd.product.category.name,
+                  pig.farm.id,
+                );
+                // si no se obtiene por id | name no existe se crea una nueva categoria
+                if (!category) {
+                  category = await this.createCategoryUseCase.execute(userId, {
+                    farmId: pig.farm.id,
+                    name: pigProd.product.category.name,
+                  });
+                }
+              }
+            }
+
+            if (!category) {
+              throw Application.notFound(
+                'Categoría de producto no encontrada.',
+              );
+            }
+
+            if (!product) {
+              product = await this.createProductUseCase.execute(userId, {
+                farmId: pig.farm.id,
+                categoryId: category.id,
+                name: pigProd.product.name,
+                price: pigProd.product.price,
+              });
+            }
+          }
+          if (!product) throw Application.notFound('Producto no encontrado.');
+
+          // Actualizar o agregar PigProduct al cerdo
           const ppFind = pig.pigProduct.find((p) => p.id === pigProd.id);
 
           if (ppFind) {
@@ -166,8 +239,6 @@ export class UpdatePigUseCase {
             if (pigProd.date) ppFind.saveDate(new Date(pigProd.date));
             pig.savePigProduct(ppFind, previousPrice);
           } else {
-            // nuevo producto
-            if (!product) throw Application.notFound('Producto no encontrado.');
             pig.savePigProduct(
               PigProduct.create({
                 pigId: pig.id,
@@ -254,9 +325,18 @@ export class UpdatePigUseCase {
             });
 
             // obtener última secuencia de parto
-            const currentBirth = pig.sowCurrentReproductiveCycle?.birth;
-            if (currentBirth) {
-              birth.saveNumberBirth(currentBirth.numberBirth + 1);
+            const currentBirths = pig.sowReproductiveCycle
+              .filter((sr) => sr.birth)
+              .map((h) => h.birth);
+
+            // Obtener el último parto
+            const lastBirth = currentBirths[0];
+
+            if (lastBirth) {
+              birth.saveNumberBirth(lastBirth.numberBirth + 1);
+            } else {
+              // Si no hay partos previos
+              birth.saveNumberBirth(1);
             }
 
             newCycle.saveBirth(birth);

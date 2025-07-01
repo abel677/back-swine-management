@@ -24,6 +24,14 @@ import { GetSettingByFarmIdUseCase } from '../../../farm/application/use-cases/s
 import { GetReproductiveStageByIdUseCase } from '../../../farm/application/use-cases/reproductive-stage/get-reproductive-by-id.usecase';
 import { CreateSowNotificationsUseCase } from '../../../notifications/application/use-cases/create-sow-notification.usecase';
 import { DeleteSowNotificationUseCase } from '../../../notifications/application/use-cases/delete-sow-notification.usecase';
+import { GetProductByIdUseCase } from '../../../product/application/use-cases/get-product-by-id.usecase';
+import { GetProductByNameUseCase } from '../../../product/application/use-cases/get-product-by-name.usecase';
+import { CreateProductUseCase } from '../../../product/application/use-cases/create-product.usecase';
+import { GetCategoryByIdUseCase } from '../../../category/application/use-cases/get-category-by-id.usecase';
+import { GetCategoryByNameUseCase } from '../../../category/application/use-cases/get-category-by-name.usecase';
+import { CreateCategoryUseCase } from '../../../category/application/use-cases/create-category.usecase';
+import { PigProduct } from '../../domain/entities/pig-product.entity';
+import { Category } from '../../../category/domain/entities/category.entity';
 
 @injectable()
 export class CreatePigUseCase {
@@ -52,6 +60,21 @@ export class CreatePigUseCase {
     private readonly createSowNotificationUseCase: CreateSowNotificationsUseCase,
     @inject('DeleteSowNotificationUseCase')
     private readonly deleteSowNotificationUseCase: DeleteSowNotificationUseCase,
+    // producto
+    @inject('GetProductByIdUseCase')
+    private readonly getProductByIdUseCase: GetProductByIdUseCase,
+    @inject('GetProductByIdUseCase')
+    private readonly getProductByName: GetProductByNameUseCase,
+    @inject('CreateProductUseCase')
+    private readonly createProductUseCase: CreateProductUseCase,
+
+    // categoria
+    @inject('GetCategoryByIdUseCase')
+    private readonly getCategoryByIdUseCase: GetCategoryByIdUseCase,
+    @inject('GetCategoryByNameUseCase')
+    private readonly getCategoryByNameUseCase: GetCategoryByNameUseCase,
+    @inject('CreateCategoryUseCase')
+    private readonly createCategoryUseCase: CreateCategoryUseCase,
   ) {}
 
   async execute(userId: string, dto: CreatePigDto) {
@@ -98,6 +121,96 @@ export class CreatePigUseCase {
       type: dto.type as Type,
       fatherId: dto.fatherId,
     });
+
+    if (dto.pigProduct) {
+      for (const pigProd of dto.pigProduct) {
+        let product = undefined;
+
+        // verificar si vienen un producto
+        if (pigProd.product) {
+          // verificar si ya existe mediante el id
+          if (pigProd.product.id) {
+            // obtener el producto por el lid
+            product = await this.getProductByIdUseCase.execute(
+              pigProd.product.id,
+              newPig.farm.id,
+            );
+          } else {
+            // obtener mediante el nombre, en por si ya se ha sincronizado
+            product = await this.getProductByName.execute(
+              pigProd.product.name,
+              newPig.farm.id,
+            );
+
+            // obtener la categoría
+            let category: Category | null = null;
+
+            // verificar si viene una categoría
+            if (pigProd.product.category) {
+              // verificar si ya existe por el id
+              if (pigProd.product.category.id) {
+                // obtener la categoría por el id
+                category = await this.getCategoryByIdUseCase.execute(
+                  pigProd.product.category.id,
+                  newPig.farm.id,
+                );
+              } else {
+                // obtener por el nombre por si ya se ha sincronizado
+                category = await this.getCategoryByNameUseCase.execute(
+                  pigProd.product.category.name,
+                  newPig.farm.id,
+                );
+                // si no se obtiene por id | name no existe se crea una nueva categoria
+                if (!category) {
+                  category = await this.createCategoryUseCase.execute(userId, {
+                    farmId: newPig.farm.id,
+                    name: pigProd.product.category.name,
+                  });
+                }
+              }
+            }
+
+            if (!category) {
+              throw Application.notFound(
+                'Categoría de producto no encontrada.',
+              );
+            }
+
+            if (!product) {
+              product = await this.createProductUseCase.execute(userId, {
+                farmId: newPig.farm.id,
+                categoryId: category.id,
+                name: pigProd.product.name,
+                price: pigProd.product.price,
+              });
+            }
+          }
+          if (!product) throw Application.notFound('Producto no encontrado.');
+
+          // Actualizar o agregar PigProduct al cerdo
+          const ppFind = newPig.pigProduct.find((p) => p.id === pigProd.id);
+
+          if (ppFind) {
+            const previousPrice = ppFind.price;
+            if (product) ppFind.saveProduct(product);
+            if (pigProd.quantity) ppFind.saveQuantity(pigProd.quantity);
+            if (pigProd.price) ppFind.savePrice(pigProd.price);
+            if (pigProd.date) ppFind.saveDate(new Date(pigProd.date));
+            newPig.savePigProduct(ppFind, previousPrice);
+          } else {
+            newPig.savePigProduct(
+              PigProduct.create({
+                pigId: newPig.id,
+                price: pigProd.price!,
+                product: product,
+                quantity: pigProd.quantity!,
+                date: new Date(pigProd.date!),
+              }),
+            );
+          }
+        }
+      }
+    }
 
     // verificar si es un reproductora
     if (newPig.isSow()) {

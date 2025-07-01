@@ -12,6 +12,23 @@ export class CreatePigDto {
     public readonly initialPrice: number,
     public readonly motherId?: string,
     public readonly fatherId?: string,
+    public readonly pigProduct?: {
+      id?: string;
+      product?: {
+        id?: string;
+        name: string;
+        category: {
+          id?: string;
+          name: string;
+        };
+        price: number;
+        description?: string;
+      };
+      quantity?: number;
+      price?: number;
+      date?: string;
+      observation?: string;
+    }[],
     public readonly sowReproductiveCycle?: {
       reproductiveStageId: string;
       startDate: string;
@@ -38,6 +55,7 @@ export class CreatePigDto {
     const motherId = body?.motherId;
     const fatherId = body?.fatherId;
     const sowReproductiveCycle = body?.sowReproductiveCycle;
+    const pigProduct = body?.pigProduct;
 
     if (!farmId || !Regex.isValidUUID(farmId)) {
       return ['farmId: Id granja inválido.'];
@@ -69,6 +87,85 @@ export class CreatePigDto {
     if (fatherId && !Regex.isValidUUID(fatherId)) {
       return ['fatherId: ID cerdo inválido.'];
     }
+
+    if (pigProduct) {
+      if (!Array.isArray(pigProduct)) {
+        return ['pigProduct: Debe ser un array de productos.'];
+      }
+
+      for (let i = 0; i < pigProduct.length; i++) {
+        const entry = pigProduct[i];
+        const prefix = `pigProduct[${i}]`;
+
+        if (entry.id && !Regex.isValidUUID(entry.id)) {
+          return [`${prefix}.id: ID inválido.`];
+        }
+
+        if (!entry.product || typeof entry.product !== 'object') {
+          return [`${prefix}.product: Objeto producto requerido.`];
+        } else {
+          const { id, name, category, price } = entry.product;
+
+          if (id) {
+            if (!Regex.isValidUUID(id)) {
+              return [`${prefix}.product.id: ID de producto inválido.`];
+            }
+          } else {
+            if (!name || typeof name !== 'string') {
+              return [`${prefix}.product.name: Nombre del producto requerido.`];
+            }
+
+            if (typeof price !== 'number' || price < 0) {
+              return [`${prefix}.product.price: Precio inválido.`];
+            }
+
+            if (!category || typeof category !== 'object') {
+              return [`${prefix}.product.category: Categoría requerida.`];
+            }
+
+            if (category.id) {
+              if (!Regex.isValidUUID(category.id)) {
+                return [
+                  `${prefix}.product.category.id: ID de categoría inválido.`,
+                ];
+              }
+            } else {
+              if (!category.name || typeof category.name !== 'string') {
+                return [
+                  `${prefix}.product.category.name: Nombre de categoría requerido.`,
+                ];
+              }
+            }
+          }
+        }
+
+        if (
+          entry.quantity !== undefined &&
+          (typeof entry.quantity !== 'number' || entry.quantity <= 0)
+        ) {
+          return [`${prefix}.quantity: Cantidad inválida.`];
+        }
+
+        if (
+          entry.price !== undefined &&
+          (typeof entry.price !== 'number' || entry.price < 0)
+        ) {
+          return [`${prefix}.price: Precio inválido.`];
+        }
+
+        if (entry.date && !Regex.isoDate.test(entry.date)) {
+          return [`${prefix}.date: Fecha inválida.`];
+        }
+
+        if (
+          entry.observation !== undefined &&
+          typeof entry.observation !== 'string'
+        ) {
+          return [`${prefix}.observation: Observación inválida.`];
+        }
+      }
+    }
+
     if (sowReproductiveCycle) {
       // Validaciones del historial reproductivo
       if (body.sowReproductiveCycle) {
@@ -144,6 +241,7 @@ export class CreatePigDto {
         initialPrice,
         motherId,
         fatherId,
+        pigProduct,
         sowReproductiveCycle,
       ),
     ];
