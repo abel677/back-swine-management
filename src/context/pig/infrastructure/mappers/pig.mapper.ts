@@ -40,7 +40,7 @@ export class PigMapper {
         pig.sowReproductiveCycle?.length > 0
           ? ReproductiveCycleMapper.toHttpResponse(pig.sowReproductiveCycle[0])
           : null,
-      childrenFromMother: pig.childrenFromMother,
+      //childrenFromMother: pig.childrenFromMother,
     };
   }
 
@@ -75,7 +75,7 @@ export class PigMapper {
         data.sowReproductiveCycle && data.sowReproductiveCycle.length > 0
           ? ReproductiveCycleMapper.toDomain(data.sowReproductiveCycle[0])
           : null,
-      childrenFromMother: data.childrenFromMother,
+      //childrenFromMother: data.childrenFromMother,
       createdAt: data.createdAt,
       updatedAt: data.updatedAt,
     });
@@ -268,7 +268,7 @@ export class PigMapper {
                             state: piglet.state,
                             farm: { connect: { id: piglet.farm.id } },
                             breed: { connect: { id: piglet.breed.id } },
-                            phase: { connect: { id: pig.phase.id } },
+                            phase: { connect: { id: piglet.phase.id } },
                             mother: { connect: { id: piglet.motherId } },
                             father: piglet.fatherId
                               ? { connect: { id: piglet.fatherId } }
@@ -301,7 +301,7 @@ export class PigMapper {
                           state: piglet.state,
                           farm: { connect: { id: piglet.farm.id } },
                           breed: { connect: { id: piglet.breed.id } },
-                          phase: { connect: { id: pig.phase.id } },
+                          phase: { connect: { id: piglet.phase.id } },
                           mother: { connect: { id: piglet.motherId } },
                           father: piglet.fatherId
                             ? { connect: { id: piglet.fatherId } }
@@ -349,7 +349,7 @@ export class PigMapper {
                         state: piglet.state,
                         farm: { connect: { id: piglet.farm.id } },
                         breed: { connect: { id: piglet.breed.id } },
-                        phase: { connect: { id: pig.phase.id } },
+                        phase: { connect: { id: piglet.phase.id } },
                         mother: { connect: { id: piglet.motherId } },
                         father: piglet.fatherId
                           ? { connect: { id: piglet.fatherId } }

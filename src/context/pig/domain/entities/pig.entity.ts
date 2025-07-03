@@ -33,7 +33,7 @@ interface PigProps {
   weights: PigWeight[];
   pigProduct: PigProduct[];
 
-  childrenFromMother: Pig[];
+  //childrenFromMother: Pig[];
 
   createdAt: Date;
   updatedAt: Date;
@@ -41,8 +41,8 @@ interface PigProps {
 
 type CreatePig = Omit<
   PigProps,
-  | 'childrenFromMother'
-  | 'childrenFromFather'
+  //| 'childrenFromMother'
+  //| 'childrenFromFather'
   | 'sowReproductiveCycle'
   | 'investedPrice'
   | 'state'
@@ -70,7 +70,7 @@ export class Pig {
       weights: [],
       pigProduct: [],
       sowCurrentReproductiveCycle: null,
-      childrenFromMother: [],
+      //childrenFromMother: [],
       createdAt: currentDate,
       updatedAt: currentDate,
     });
@@ -244,9 +244,9 @@ export class Pig {
     return this.props.sowCurrentReproductiveCycle;
   }
 
-  get childrenFromMother() {
-    return this.props.childrenFromMother;
-  }
+  // get childrenFromMother() {
+  //   return this.props.childrenFromMother;
+  // }
   get weights() {
     return this.props.weights;
   }
