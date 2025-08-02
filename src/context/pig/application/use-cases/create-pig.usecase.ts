@@ -321,15 +321,15 @@ export class CreatePigUseCase {
                 sex: PigSex.Male,
               },
             ];
+
             pigletsConfig.forEach(({ count, sex }) => {
               for (let i = 0; i < count; i++) {
+                const pigletEarTag = `P${sex === PigSex.Female ? 'H' : 'M'}P-${newPig.earTag}`;
                 const piglet = Pig.create({
                   farm: newPig.farm,
                   breed: pigletBreed!,
                   phase: phasePiglet!,
-                  earTag: `P${sex === PigSex.Female ? 'H' : 'M'}P-${crypto
-                    .randomUUID()
-                    .slice(0, 4)}`,
+                  earTag: pigletEarTag,
                   birthDate: new Date(),
                   initialPrice: setting.initialPigletPrice,
                   type: PigType.Production,

@@ -22,6 +22,17 @@ export class PrismaNotificationRepository implements NotificationRepository {
     });
   }
 
+  async getById(userId: string, id: string): Promise<Notification | null> {
+    const notification = await this.prisma.notification.findFirst({
+      where: {
+        userId,
+        id,
+      },
+    });
+    if (!notification) return null;
+    return NotificationMapper.toDomain(notification);
+  }
+
   async findAllSent(userId: string): Promise<Notification[]> {
     const notifications = await this.prisma.notification.findMany({
       where: {
@@ -34,6 +45,7 @@ export class PrismaNotificationRepository implements NotificationRepository {
         createdAt: 'desc',
       },
     });
+
     return notifications.map((notification) =>
       NotificationMapper.toDomain(notification),
     );
@@ -45,13 +57,12 @@ export class PrismaNotificationRepository implements NotificationRepository {
 
     const endDate = new Date(startDate);
     endDate.setDate(endDate.getDate() + 1);
-    endDate.setHours(23, 59, 59, 999); 
+    endDate.setHours(23, 59, 59, 999);
 
     const dateRange = {
       start: startDate,
       end: endDate,
     };
-
 
     const notifications = await this.prisma.notification.findMany({
       where: {
