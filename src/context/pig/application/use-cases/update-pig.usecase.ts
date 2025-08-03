@@ -220,7 +220,10 @@ export class UpdatePigUseCase {
             if (!product) {
               product = await this.createProductUseCase.execute(userId, {
                 farmId: pig.farm.id,
-                categoryId: category.id,
+                category: {
+                  id: category.id,
+                  name: category.name,
+                },
                 name: pigProd.product.name,
                 price: pigProd.product.price,
               });

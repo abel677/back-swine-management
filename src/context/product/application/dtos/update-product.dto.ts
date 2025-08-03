@@ -2,8 +2,11 @@ import { Regex } from '../../../../utils/regex';
 
 export class UpdateProductDto {
   private constructor(
+    public category?: {
+      id?: string;
+      name?: string;
+    },
     public farmId?: string,
-    public categoryId?: string,
     public name?: string,
     public price?: number,
     public description?: string,
@@ -35,10 +38,23 @@ export class UpdateProductDto {
       }
     }
 
-    if (body.categoryId !== undefined) {
-      if (!Regex.isValidUUID(body.categoryId)) {
-        return ['categoryId: ID de categoría inválido o faltante.'];
-      }
+    if (body?.category && typeof body.category !== 'object') {
+      return ['category: La categoría es obligatoria y debe ser un objeto.'];
+    }
+
+    if (
+      body.category.id &&
+      body.category.id !== null &&
+      !Regex.isValidUUID(body.category.id)
+    ) {
+      return ['category.id: ID de categoría inválido.'];
+    }
+
+    if (
+      typeof body.category.name !== 'string' ||
+      body.category.name.trim().length === 0
+    ) {
+      return ['category.name: Nombre de categoría inválido o faltante.'];
     }
 
     return [
