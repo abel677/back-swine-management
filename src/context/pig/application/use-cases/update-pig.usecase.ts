@@ -67,8 +67,10 @@ export class UpdatePigUseCase {
     // producto
     @inject('GetProductByIdUseCase')
     private readonly getProductByIdUseCase: GetProductByIdUseCase,
-    @inject('GetProductByIdUseCase')
-    private readonly getProductByName: GetProductByNameUseCase,
+
+    @inject('GetProductByNameUseCase')
+    private readonly getProductByNameUseCase: GetProductByNameUseCase,
+
     @inject('CreateProductUseCase')
     private readonly createProductUseCase: CreateProductUseCase,
 
@@ -177,12 +179,6 @@ export class UpdatePigUseCase {
               pig.farm.id,
             );
           } else {
-            // obtener mediante el nombre, en por si ya se ha sincronizado
-            product = await this.getProductByName.execute(
-              pigProd.product.name,
-              pig.farm.id,
-            );
-
             // obtener la categoría
             let category: Category | null = null;
 
@@ -216,6 +212,12 @@ export class UpdatePigUseCase {
                 'Categoría de producto no encontrada.',
               );
             }
+            // obtener mediante el nombre, en por si ya se ha sincronizado
+            product = await this.getProductByNameUseCase.execute(
+              pigProd.product.name,
+              pig.farm.id,
+            );
+            console.log({ product });
 
             if (!product) {
               product = await this.createProductUseCase.execute(userId, {

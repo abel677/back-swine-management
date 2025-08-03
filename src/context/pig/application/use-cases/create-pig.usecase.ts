@@ -63,8 +63,10 @@ export class CreatePigUseCase {
     // producto
     @inject('GetProductByIdUseCase')
     private readonly getProductByIdUseCase: GetProductByIdUseCase,
-    @inject('GetProductByIdUseCase')
-    private readonly getProductByName: GetProductByNameUseCase,
+
+    @inject('GetProductByNameUseCase')
+    private readonly getProductByNameUseCase: GetProductByNameUseCase,
+
     @inject('CreateProductUseCase')
     private readonly createProductUseCase: CreateProductUseCase,
 
@@ -137,7 +139,7 @@ export class CreatePigUseCase {
             );
           } else {
             // obtener mediante el nombre, en por si ya se ha sincronizado
-            product = await this.getProductByName.execute(
+            product = await this.getProductByNameUseCase.execute(
               pigProd.product.name,
               newPig.farm.id,
             );
@@ -181,7 +183,7 @@ export class CreatePigUseCase {
                 farmId: newPig.farm.id,
                 category: {
                   id: category.id,
-                  name: category.name
+                  name: category.name,
                 },
                 name: pigProd.product.name,
                 price: pigProd.product.price,

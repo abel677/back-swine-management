@@ -53,9 +53,9 @@ export class UpdateProductUseCase {
       product.saveFarm(farm);
     }
 
-    if (dto.categoryId) {
+    if (dto.category?.id) {
       const category = await this.getCategoryByIdUseCase.execute(
-        dto.categoryId,
+        dto.category.id,
         product.farmId,
       );
 
