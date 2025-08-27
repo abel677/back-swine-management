@@ -5,6 +5,7 @@ import {
   allReproductiveState,
   allPhases,
   allSettings,
+  updateSettings,
 } from './controller';
 
 const router = Router();
@@ -12,6 +13,7 @@ const router = Router();
 router.get('/phases', authMiddleware, allPhases);
 router.get('/reproductive-stage', authMiddleware, allReproductiveState);
 router.get('/settings', authMiddleware, allSettings);
+router.put('/settings', authMiddleware, updateSettings);
 router.get('/', authMiddleware, all);
 
 export default router;
