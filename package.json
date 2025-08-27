@@ -15,7 +15,7 @@
   "license": "ISC",
   "description": "",
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=20.0.0"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
