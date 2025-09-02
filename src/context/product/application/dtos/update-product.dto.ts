@@ -9,6 +9,7 @@ export class UpdateProductDto {
     public farmId?: string,
     public name?: string,
     public price?: number,
+    public unitMeasurement?: string,
     public description?: string,
   ) {}
 
@@ -29,6 +30,15 @@ export class UpdateProductDto {
         return [
           'price: Precio de producto debe ser un número mayor o igual a cero.',
         ];
+      }
+    }
+
+    if (body.unitMeasurement !== undefined) {
+      if (
+        typeof body.unitMeasurement !== 'string' ||
+        body.unitMeasurement.trim().length === 0
+      ) {
+        return ['unitMeasurement: Unidad de medida faltante o inválido.'];
       }
     }
 
@@ -64,6 +74,7 @@ export class UpdateProductDto {
         body.categoryId,
         body.name?.trim(),
         body.price,
+        body.unitMeasurement?.trim(),
         body.description?.trim(),
       ),
     ];

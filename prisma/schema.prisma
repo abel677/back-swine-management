@@ -110,17 +110,18 @@ model Category {
 }
 
 model Product {
-  id          String       @id @default(uuid())
-  farmId      String
-  categoryId  String
-  name        String
-  description String?      @db.LongText
-  price       Decimal      @db.Decimal(10, 3)
-  createdAt   DateTime
-  updatedAt   DateTime
-  category    Category     @relation(fields: [categoryId], references: [id], onDelete: Cascade)
-  farm        Farm         @relation(fields: [farmId], references: [id], onDelete: Cascade)
-  pigs        PigProduct[]
+  id              String       @id @default(uuid())
+  farmId          String
+  categoryId      String
+  name            String
+  description     String?      @db.LongText
+  price           Decimal      @db.Decimal(10, 3)
+  createdAt       DateTime
+  updatedAt       DateTime
+  unitMeasurement String
+  category        Category     @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  farm            Farm         @relation(fields: [farmId], references: [id], onDelete: Cascade)
+  pigs            PigProduct[]
 }
 
 model PigProduct {

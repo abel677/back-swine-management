@@ -43,6 +43,10 @@ export class UpdateProductUseCase {
       product.saveDescription(dto.description);
     }
 
+    if (dto.unitMeasurement) {
+      product.saveUnitMeasurement(dto.unitMeasurement);
+    }
+
     if (dto.price) {
       product.savePrice(dto.price);
     }

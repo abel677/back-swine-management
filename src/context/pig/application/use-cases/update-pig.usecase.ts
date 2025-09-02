@@ -29,7 +29,6 @@ import { PigMapper } from '../../infrastructure/mappers/pig.mapper';
 import { PigWeight } from '../../domain/entities/pig-weight';
 import { GetProductByIdUseCase } from '../../../product/application/use-cases/get-product-by-id.usecase';
 import { PigProduct } from '../../domain/entities/pig-product.entity';
-import { Product } from '../../../product/domain/entities/product.entity';
 import { GetCategoryByIdUseCase } from '../../../category/application/use-cases/get-category-by-id.usecase';
 import { CreateProductUseCase } from '../../../product/application/use-cases/create-product.usecase';
 import { CreateCategoryUseCase } from '../../../category/application/use-cases/create-category.usecase';
@@ -228,6 +227,7 @@ export class UpdatePigUseCase {
                 },
                 name: pigProd.product.name,
                 price: pigProd.product.price,
+                unitMeasurement: pigProd.product.unitMeasurement,
               });
             }
           }

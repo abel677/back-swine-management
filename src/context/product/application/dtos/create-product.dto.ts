@@ -9,6 +9,7 @@ export class CreateProductDto {
     },
     public name: string,
     public price: number,
+    public unitMeasurement: string,
     public description?: string,
   ) {}
 
@@ -40,6 +41,13 @@ export class CreateProductDto {
       return ['name: Nombre de producto faltante o inválido.'];
     }
 
+    if (
+      typeof body?.unitMeasurement !== 'string' ||
+      body.unitMeasurement.trim().length === 0
+    ) {
+      return ['unitMeasurement: Unidad de medida faltante o inválido.'];
+    }
+
     if (body?.price === undefined || body.price === null) {
       return ['price: Precio de producto faltante.'];
     }
@@ -67,6 +75,7 @@ export class CreateProductDto {
         },
         body.name.trim(),
         body.price,
+        body.unitMeasurement?.trim(),
         body.description?.trim(),
       ),
     ];

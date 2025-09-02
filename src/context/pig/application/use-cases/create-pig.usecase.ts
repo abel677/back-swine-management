@@ -187,6 +187,7 @@ export class CreatePigUseCase {
                 },
                 name: pigProd.product.name,
                 price: pigProd.product.price,
+                unitMeasurement: pigProd.product.unitMeasurement,
               });
             }
           }

@@ -62,6 +62,7 @@ export class CreateProductUseCase {
       category: category!,
       description: dto.description,
       price: dto.price,
+      unitMeasurement: dto.unitMeasurement,
     });
     await this.productRepository.save(newProduct);
     return newProduct;

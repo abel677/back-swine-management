@@ -8,6 +8,7 @@ interface ProductProps {
   name: string;
   description?: string;
   price: number;
+  unitMeasurement: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -42,6 +43,12 @@ export class Product {
     this.props.price = price;
     this.updateTimeStamps();
   }
+
+  saveUnitMeasurement(unitMeasurement: string) {
+    this.props.unitMeasurement = unitMeasurement;
+    this.updateTimeStamps();
+  }
+  
   saveDescription(description: string) {
     this.props.description = description;
     this.updateTimeStamps();
@@ -80,6 +87,9 @@ export class Product {
 
   get price() {
     return this.props.price;
+  }
+  get unitMeasurement() {
+    return this.props.unitMeasurement;
   }
   get createdAt() {
     return this.props.createdAt;

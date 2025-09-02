@@ -29,6 +29,7 @@ export class UpdatePigDto {
           name: string;
         };
         price: number;
+        unitMeasurement: string;
         description?: string;
       };
       quantity?: number;
@@ -153,7 +154,7 @@ export class UpdatePigDto {
         if (!entry.product || typeof entry.product !== 'object') {
           return [`${prefix}.product: Objeto producto requerido.`];
         } else {
-          const { id, name, category, price } = entry.product;
+          const { id, name, category, price, unitMeasurement } = entry.product;
 
           if (id) {
             if (!Regex.isValidUUID(id)) {
@@ -166,6 +167,12 @@ export class UpdatePigDto {
 
             if (typeof price !== 'number' || price < 0) {
               return [`${prefix}.product.price: Precio inválido.`];
+            }
+
+            if (!unitMeasurement || typeof unitMeasurement !== 'string') {
+              return [
+                `${prefix}.product.unitMeasurement: Unidad de medida del producto requerido.`,
+              ];
             }
 
             if (!category || typeof category !== 'object') {
