@@ -13,6 +13,7 @@ export class PrismaPigRepository implements PigRepository {
       where: { id },
       data: {
         remove: true,
+        earTag: `removed-${new Date().toISOString()}`,
       },
     });
   }
@@ -80,7 +81,7 @@ export class PrismaPigRepository implements PigRepository {
             },
           },
           orderBy: {
-            startDate: 'desc',
+            createdAt: 'desc',
           },
         },
       },
@@ -164,7 +165,7 @@ export class PrismaPigRepository implements PigRepository {
             },
           },
           orderBy: {
-            startDate: 'desc',
+            createdAt: 'desc',
           },
         },
       },
@@ -229,7 +230,7 @@ export class PrismaPigRepository implements PigRepository {
             },
           },
           orderBy: {
-            startDate: 'desc',
+            createdAt: 'desc',
           },
         },
       },
@@ -293,7 +294,7 @@ export class PrismaPigRepository implements PigRepository {
             },
           },
           orderBy: {
-            startDate: 'desc',
+            createdAt: 'desc',
           },
         },
       },
@@ -358,7 +359,7 @@ export class PrismaPigRepository implements PigRepository {
             },
           },
           orderBy: {
-            startDate: 'desc',
+            createdAt: 'desc',
           },
         },
       },

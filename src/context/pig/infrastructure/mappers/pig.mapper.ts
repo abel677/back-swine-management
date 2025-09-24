@@ -82,7 +82,7 @@ export class PigMapper {
   }
 
   static toCreatePersistence(pig: Pig): Prisma.PigCreateInput {
-    return {
+    const newPig = {
       id: pig.id,
       earTag: pig.earTag,
       birthDate: pig.birthDate,
@@ -98,58 +98,66 @@ export class PigMapper {
       mother: pig.motherId ? { connect: { id: pig.motherId } } : undefined,
       father: pig.fatherId ? { connect: { id: pig.fatherId } } : undefined,
       sowReproductiveCycle: {
-        create: pig.sowReproductiveCycle?.map((rc) => ({
-          id: rc.id,
-          startDate: rc.startDate,
-          endDate: rc.endDate,
-          boar: rc.boarId
-            ? {
-                connect: { id: rc.boarId },
-              }
-            : undefined,
-          reproductiveStage: { connect: { id: rc.reproductiveStage.id } },
-          birth: rc.birth
-            ? {
-                create: {
-                  id: rc.birth.id,
-                  date: rc.birth.date,
-                  numberBirth: rc.birth.numberBirth,
-                  liveMales: rc.birth.liveMales,
-                  liveFemales: rc.birth.liveFemales,
-                  totalDead: rc.birth.totalDead,
-                  avgWeight: rc.birth.avgWeight,
-                  description: rc.birth.description,
-                  weanedAt: rc.birth.weanedAt,
-                  piglets: {
-                    create: rc.birth.piglets?.map((piglet) => ({
-                      id: piglet.id,
-                      earTag: piglet.earTag,
-                      birthDate: piglet.birthDate,
-                      gender: piglet.gender,
-                      type: piglet.type,
-                      initialPrice: piglet.initialPrice,
-                      investedPrice: piglet.investedPrice,
-                      state: piglet.state,
-                      farm: { connect: { id: piglet.farm.id } },
-                      breed: { connect: { id: piglet.breed.id } },
-                      phase: { connect: { id: piglet.phase.id } },
-                      mother: { connect: { id: piglet.motherId } },
-                      father: piglet.fatherId
-                        ? { connect: { id: piglet.fatherId } }
-                        : undefined,
-                      createdAt: piglet.createdAt,
-                      updatedAt: piglet.updatedAt,
-                    })),
+        create: pig.sowReproductiveCycle?.map((rc) => {
+          return {
+            id: rc.id,
+            startDate: rc.startDate,
+            endDate: rc.endDate,
+            createdAt: pig.createdAt,
+            updatedAt: pig.createdAt,
+            boar: rc.boarId
+              ? {
+                  connect: { id: rc.boarId },
+                }
+              : undefined,
+            reproductiveStage: { connect: { id: rc.reproductiveStage.id } },
+            birth: rc.birth
+              ? {
+                  create: {
+                    id: rc.birth.id,
+                    date: rc.birth.date,
+                    numberBirth: rc.birth.numberBirth,
+                    liveMales: rc.birth.liveMales,
+                    liveFemales: rc.birth.liveFemales,
+                    totalDead: rc.birth.totalDead,
+                    avgWeight: rc.birth.avgWeight,
+                    description: rc.birth.description,
+                    weanedAt: rc.birth.weanedAt,
+                    piglets: {
+                      create: rc.birth.piglets?.map((piglet) => {
+                        return {
+                          id: piglet.id,
+                          earTag: piglet.earTag,
+                          birthDate: piglet.birthDate,
+                          gender: piglet.gender,
+                          type: piglet.type,
+                          initialPrice: piglet.initialPrice,
+                          investedPrice: piglet.investedPrice,
+                          state: piglet.state,
+                          farm: { connect: { id: piglet.farm.id } },
+                          breed: { connect: { id: piglet.breed.id } },
+                          phase: { connect: { id: piglet.phase.id } },
+                          mother: { connect: { id: piglet.motherId } },
+                          father: piglet.fatherId
+                            ? { connect: { id: piglet.fatherId } }
+                            : undefined,
+                          createdAt: piglet.createdAt,
+                          updatedAt: piglet.updatedAt,
+                        };
+                      }),
+                    },
                   },
-                },
-              }
-            : undefined,
-        })),
+                }
+              : undefined,
+          };
+        }),
       },
       boarReproductiveCycle: undefined,
       createdAt: pig.createdAt,
       updatedAt: pig.updatedAt,
+      remove: false,
     };
+    return newPig;
   }
 
   static toUpdatePersistence(pig: Pig): Prisma.PigUpdateInput {
@@ -212,52 +220,89 @@ export class PigMapper {
         }),
       },
       sowReproductiveCycle: {
-        upsert: pig.sowReproductiveCycle?.map((rc) => ({
-          where: { id: rc.id },
-          update: {
-            startDate: rc.startDate,
-            endDate: rc.endDate,
-            boar: rc.boarId
-              ? {
-                  connect: { id: rc.boarId },
-                }
-              : undefined,
-            reproductiveStage: { connect: { id: rc.reproductiveStage.id } },
-            birth: rc.birth
-              ? {
-                  upsert: {
-                    where: { id: rc.birth.id },
-                    update: {
-                      date: rc.birth.date,
-                      numberBirth: rc.birth.numberBirth,
-                      liveMales: rc.birth.liveMales,
-                      liveFemales: rc.birth.liveFemales,
-                      totalDead: rc.birth.totalDead,
-                      avgWeight: rc.birth.avgWeight,
-                      description: rc.birth.description,
-                      weanedAt: rc.birth.weanedAt,
-                      piglets: {
-                        upsert: rc.birth.piglets.map((piglet) => ({
-                          where: { id: piglet.id },
-                          update: {
-                            earTag: piglet.earTag,
-                            birthDate: piglet.birthDate,
-                            gender: piglet.gender,
-                            type: piglet.type,
-                            farm: { connect: { id: piglet.farm.id } },
-                            breed: { connect: { id: piglet.breed.id } },
-                            initialPrice: piglet.initialPrice,
-                            investedPrice: piglet.investedPrice,
-                            state: piglet.state,
-                            phase: { connect: { id: piglet.phase.id } },
-                            mother: { connect: { id: piglet.motherId } },
-                            father: piglet.fatherId
-                              ? { connect: { id: piglet.fatherId } }
-                              : undefined,
-                            createdAt: piglet.createdAt,
-                            updatedAt: piglet.updatedAt,
-                          },
-                          create: {
+        upsert: pig.sowReproductiveCycle?.map((rc) => {
+          console.log(rc);
+
+          return {
+            where: { id: rc.id },
+            update: {
+              startDate: rc.startDate,
+              endDate: rc.endDate,
+              updatedAt: pig.updatedAt,
+              boar: rc.boarId
+                ? {
+                    connect: { id: rc.boarId },
+                  }
+                : undefined,
+              reproductiveStage: { connect: { id: rc.reproductiveStage.id } },
+              birth: rc.birth
+                ? {
+                    upsert: {
+                      where: { id: rc.birth.id },
+                      update: {
+                        date: rc.birth.date,
+                        numberBirth: rc.birth.numberBirth,
+                        liveMales: rc.birth.liveMales,
+                        liveFemales: rc.birth.liveFemales,
+                        totalDead: rc.birth.totalDead,
+                        avgWeight: rc.birth.avgWeight,
+                        description: rc.birth.description,
+                        weanedAt: rc.birth.weanedAt,
+                        piglets: {
+                          upsert: rc.birth.piglets.map((piglet) => ({
+                            where: { id: piglet.id },
+                            update: {
+                              earTag: piglet.earTag,
+                              birthDate: piglet.birthDate,
+                              gender: piglet.gender,
+                              type: piglet.type,
+                              farm: { connect: { id: piglet.farm.id } },
+                              breed: { connect: { id: piglet.breed.id } },
+                              initialPrice: piglet.initialPrice,
+                              investedPrice: piglet.investedPrice,
+                              state: piglet.state,
+                              phase: { connect: { id: piglet.phase.id } },
+                              mother: { connect: { id: piglet.motherId } },
+                              father: piglet.fatherId
+                                ? { connect: { id: piglet.fatherId } }
+                                : undefined,
+                              createdAt: piglet.createdAt,
+                              updatedAt: piglet.updatedAt,
+                            },
+                            create: {
+                              id: piglet.id,
+                              earTag: piglet.earTag,
+                              birthDate: piglet.birthDate,
+                              gender: piglet.gender,
+                              type: piglet.type,
+                              initialPrice: piglet.initialPrice,
+                              investedPrice: piglet.investedPrice,
+                              state: piglet.state,
+                              farm: { connect: { id: piglet.farm.id } },
+                              breed: { connect: { id: piglet.breed.id } },
+                              phase: { connect: { id: piglet.phase.id } },
+                              mother: { connect: { id: piglet.motherId } },
+                              father: piglet.fatherId
+                                ? { connect: { id: piglet.fatherId } }
+                                : undefined,
+                              createdAt: piglet.createdAt,
+                              updatedAt: piglet.updatedAt,
+                            },
+                          })),
+                        },
+                      },
+                      create: {
+                        id: rc.birth.id,
+                        date: rc.birth.date,
+                        numberBirth: rc.birth.numberBirth,
+                        liveMales: rc.birth.liveMales,
+                        liveFemales: rc.birth.liveFemales,
+                        totalDead: rc.birth.totalDead,
+                        avgWeight: rc.birth.avgWeight,
+                        description: rc.birth.description,
+                        weanedAt: rc.birth.weanedAt,
+                        piglets: {
+                          create: rc.birth.piglets.map((piglet) => ({
                             id: piglet.id,
                             earTag: piglet.earTag,
                             birthDate: piglet.birthDate,
@@ -275,10 +320,25 @@ export class PigMapper {
                               : undefined,
                             createdAt: piglet.createdAt,
                             updatedAt: piglet.updatedAt,
-                          },
-                        })),
+                          })),
+                        },
                       },
                     },
+                  }
+                : undefined,
+            },
+            create: {
+              id: rc.id,
+              startDate: rc.startDate,
+              endDate: rc.endDate,
+              boar: rc.boarId
+                ? {
+                    connect: { id: rc.boarId },
+                  }
+                : undefined,
+              reproductiveStage: { connect: { id: rc.reproductiveStage.id } },
+              birth: rc.birth
+                ? {
                     create: {
                       id: rc.birth.id,
                       date: rc.birth.date,
@@ -311,58 +371,11 @@ export class PigMapper {
                         })),
                       },
                     },
-                  },
-                }
-              : undefined,
-          },
-          create: {
-            id: rc.id,
-            startDate: rc.startDate,
-            endDate: rc.endDate,
-            boar: rc.boarId
-              ? {
-                  connect: { id: rc.boarId },
-                }
-              : undefined,
-            reproductiveStage: { connect: { id: rc.reproductiveStage.id } },
-            birth: rc.birth
-              ? {
-                  create: {
-                    id: rc.birth.id,
-                    date: rc.birth.date,
-                    numberBirth: rc.birth.numberBirth,
-                    liveMales: rc.birth.liveMales,
-                    liveFemales: rc.birth.liveFemales,
-                    totalDead: rc.birth.totalDead,
-                    avgWeight: rc.birth.avgWeight,
-                    description: rc.birth.description,
-                    weanedAt: rc.birth.weanedAt,
-                    piglets: {
-                      create: rc.birth.piglets.map((piglet) => ({
-                        id: piglet.id,
-                        earTag: piglet.earTag,
-                        birthDate: piglet.birthDate,
-                        gender: piglet.gender,
-                        type: piglet.type,
-                        initialPrice: piglet.initialPrice,
-                        investedPrice: piglet.investedPrice,
-                        state: piglet.state,
-                        farm: { connect: { id: piglet.farm.id } },
-                        breed: { connect: { id: piglet.breed.id } },
-                        phase: { connect: { id: piglet.phase.id } },
-                        mother: { connect: { id: piglet.motherId } },
-                        father: piglet.fatherId
-                          ? { connect: { id: piglet.fatherId } }
-                          : undefined,
-                        createdAt: piglet.createdAt,
-                        updatedAt: piglet.updatedAt,
-                      })),
-                    },
-                  },
-                }
-              : undefined,
-          },
-        })),
+                  }
+                : undefined,
+            },
+          };
+        }),
       },
       createdAt: pig.createdAt,
       updatedAt: pig.updatedAt,

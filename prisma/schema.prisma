@@ -161,11 +161,15 @@ model Breed {
 }
 
 model ReproductiveCycle {
-  id                  String            @id @default(uuid())
-  sowId               String
-  boarId              String?
-  startDate           DateTime
-  endDate             DateTime?
+  id        String    @id @default(uuid())
+  sowId     String
+  boarId    String?
+  startDate DateTime
+  endDate   DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+
   reproductiveStageId String
   reproductiveStage   ReproductiveStage @relation(fields: [reproductiveStageId], references: [id], onDelete: Cascade)
   birth               Birth?

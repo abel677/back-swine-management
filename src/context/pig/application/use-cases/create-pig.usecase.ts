@@ -330,7 +330,8 @@ export class CreatePigUseCase {
 
             pigletsConfig.forEach(({ count, sex }) => {
               for (let i = 0; i < count; i++) {
-                const pigletEarTag = `P${sex === PigSex.Female ? 'H' : 'M'}P-${newPig.earTag}`;
+                const pigletEarTag = `P${sex === PigSex.Female ? 'H' : 'M'}-${newPig.earTag}-${crypto.randomUUID().substring(0, 4)}`;
+
                 const piglet = Pig.create({
                   farm: newPig.farm,
                   breed: pigletBreed!,
