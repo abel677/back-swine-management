@@ -8,6 +8,15 @@ import { PigMapper } from '../../mappers/pig.mapper';
 export class PrismaPigRepository implements PigRepository {
   constructor(@inject('PrismaClient') private readonly prisma: PrismaClient) {}
 
+  async delete(id: string): Promise<void> {
+    await this.prisma.pig.update({
+      where: { id },
+      data: {
+        remove: true,
+      },
+    });
+  }
+
   async all(userId: string): Promise<Pig[]> {
     const pigs = await this.prisma.pig.findMany({
       where: {
@@ -21,6 +30,7 @@ export class PrismaPigRepository implements PigRepository {
             },
           ],
         },
+        remove: false,
       },
       include: {
         breed: true,
@@ -93,6 +103,7 @@ export class PrismaPigRepository implements PigRepository {
     const pig = await this.prisma.pig.findFirst({
       where: {
         id: id,
+        remove: false,
         farm: {
           OR: [
             {
@@ -167,6 +178,7 @@ export class PrismaPigRepository implements PigRepository {
       where: {
         id: { in: ids.map((pig) => pig.id) },
         farmId: farmId,
+        remove: false,
       },
       include: {
         breed: true,
@@ -230,6 +242,7 @@ export class PrismaPigRepository implements PigRepository {
       where: {
         id: id,
         farmId: farmId,
+        remove: false,
       },
       include: {
         breed: true,
@@ -294,6 +307,7 @@ export class PrismaPigRepository implements PigRepository {
       where: {
         earTag: earTag,
         farmId: farmId,
+        remove: false,
       },
       include: {
         breed: true,

@@ -87,6 +87,7 @@ import { AllNotificationUseCase } from '../context/notifications/application/use
 import { AllPigByIdsUseCase } from '../context/pig/application/use-cases/all-pig-by-ids.usecase';
 import { GetProductByNameUseCase } from '../context/product/application/use-cases/get-product-by-name.usecase';
 import { GetCategoryByNameUseCase } from '../context/category/application/use-cases/get-category-by-name.usecase';
+import { DeletePigUseCase } from '../context/pig/application/use-cases/delete-pig.usecase';
 
 export function configureContainer(prismaClient: PrismaClient) {
   container.registerInstance('PrismaClient', prismaClient);
@@ -277,6 +278,10 @@ export function configureContainer(prismaClient: PrismaClient) {
   container.registerSingleton<PigReproductiveCalculatorUseCase>(
     'PigReproductiveCalculatorUseCase',
     PigReproductiveCalculatorUseCase,
+  );
+  container.registerSingleton<DeletePigUseCase>(
+    'DeletePigUseCase',
+    DeletePigUseCase,
   );
   container.registerSingleton<AllPigUseCase>('AllPigUseCase', AllPigUseCase);
   container.registerSingleton<CreatePigUseCase>(

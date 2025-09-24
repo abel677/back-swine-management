@@ -215,6 +215,7 @@ model Pig {
   birthId       String?
   motherId      String?
   fatherId      String?
+  remove        Boolean  @default(false)
 
   weaned    Boolean  @default(false)
   createdAt DateTime

@@ -26,14 +26,6 @@ import { SendDailyNotificationsUseCase } from './context/notifications/applicati
         );
         await sendNotifications.execute();
       });
-
-      // A las 13:00
-      cron.schedule('0 13 * * *', async () => {
-        const sendNotifications = container.resolve(
-          SendDailyNotificationsUseCase,
-        );
-        await sendNotifications.execute();
-      });
     });
   } catch (err) {
     console.error(`❌ Error al conectar con la DB: ${err}`);

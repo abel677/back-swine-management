@@ -216,7 +216,6 @@ export class UpdatePigUseCase {
               pigProd.product.name,
               pig.farm.id,
             );
-            console.log({ product });
 
             if (!product) {
               product = await this.createProductUseCase.execute(userId, {

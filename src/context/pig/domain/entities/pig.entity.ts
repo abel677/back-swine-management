@@ -125,10 +125,13 @@ export class Pig {
 
     if (index !== -1) {
       const oldPrice = previousPrice ?? this.props.pigProduct[index].price;
-      this.props.investedPrice += pigProduct.price - oldPrice;
+      const oldQuantity = this.props.pigProduct[index].quantity;
+      this.props.investedPrice +=
+        pigProduct.price * pigProduct.quantity - oldPrice * oldQuantity;
+
       this.props.pigProduct[index] = pigProduct;
     } else {
-      this.props.investedPrice += pigProduct.price;
+      this.props.investedPrice += pigProduct.price * pigProduct.quantity;
       this.props.pigProduct.unshift(pigProduct);
     }
 

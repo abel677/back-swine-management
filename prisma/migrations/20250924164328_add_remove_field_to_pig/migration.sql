@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE `Pig` ADD COLUMN `remove` BOOLEAN NOT NULL DEFAULT false;
