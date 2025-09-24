@@ -238,7 +238,7 @@ model Pig {
   pigProduct            PigProduct[]
   corralId              String?
 
-  @@unique([earTag, farmId])
+  @@unique([earTag, farmId, remove])
 }
 
 model Notification {
