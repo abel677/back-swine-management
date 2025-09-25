@@ -386,9 +386,7 @@ export class UpdatePigUseCase {
                   farm: pig.farm,
                   breed: pigletBreed!,
                   phase: phasePiglet!,
-                  earTag: `${pig.earTag}-p${sex === PigSex.Female ? 'h' : 'm'}p-${crypto
-                    .randomUUID()
-                    .slice(0, 4)}`,
+                  earTag: `${pig.earTag}-${crypto.randomUUID().slice(0, 6)}`,
                   birthDate: new Date(),
                   initialPrice: setting.initialPigletPrice,
                   type: PigType.Production,
