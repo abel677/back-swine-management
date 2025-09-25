@@ -221,8 +221,6 @@ export class PigMapper {
       },
       sowReproductiveCycle: {
         upsert: pig.sowReproductiveCycle?.map((rc) => {
-          console.log(rc);
-
           return {
             where: { id: rc.id },
             update: {
